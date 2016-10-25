@@ -1,1 +1,1 @@
-angular.module('ux-app', ['ngMaterial','ui.router']);
+angular.module('ux-app', ['ui.router','patternfly']);
