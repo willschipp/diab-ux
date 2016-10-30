@@ -25,17 +25,9 @@ angular.module('ux-app').controller('provisionController',['$scope','$modal','$r
 
 angular.module('ux-app').controller('WizardController',['$scope','$rootScope',function($scope,$rootScope){
 
+  $scope.data = {};
+
   var initializeWizard = function () {
-     $scope.data = {
-       name: '',
-       description: '',
-       lorem: 'default setting',
-       ipsum: ''
-     };
-     $scope.secondaryLoadInformation = 'ipsum dolor sit amet, porta at suspendisse ac, ut wisi vivamus, lorem sociosqu eget nunc amet.';
-    //  $timeout(function () {
-    //    $scope.deployReady = true;
-    //  }, 1000);
      $scope.nextButtonTitle = "Next >";
    };
 
@@ -43,7 +35,6 @@ angular.module('ux-app').controller('WizardController',['$scope','$rootScope',fu
      $scope.deployInProgress = true;
    };
 
-   $scope.data = {};
 
    $scope.nextCallback = function (step) {
      // call startdeploy after deploy button is clicked on review-summary tab
@@ -52,11 +43,13 @@ angular.module('ux-app').controller('WizardController',['$scope','$rootScope',fu
      }
      return true;
    };
+
    $scope.backCallback = function (step) {
      return true;
    };
 
    $scope.$on("wizard:stepChanged", function (e, parameters) {
+     console.log('invoked');
      if (parameters.step.stepId === 'review-summary') {
        $scope.nextButtonTitle = "Deploy";
      } else if (parameters.step.stepId === 'review-progress') {

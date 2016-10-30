@@ -20,11 +20,17 @@
     "angular-ui-router": "^0.3.1",
     "body-parser": "^1.15.2",
     "bootstrap": "^3.3.7",
+    "bootstrap-select": "^1.11.2",
+    "datatables": "^1.10.12",
     "express": "^4.14.0",
+    "express-session": "^1.14.1",
     "font-awesome": "^4.6.3",
     "jquery": "^3.1.1",
+    "jsonwebtoken": "^7.1.9",
     "lodash": "^4.16.4",
     "material-design-icons": "^3.0.1",
+    "passport": "^0.3.2",
+    "passport-gitlab": "^0.5.0",
     "patternfly": "^3.12.0"
   }
 }

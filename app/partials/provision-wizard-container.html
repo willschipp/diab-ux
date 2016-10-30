@@ -6,27 +6,63 @@
   next-callback="nextCallback"
   back-callback="backCallback"
   wizard-done="deployComplete || deployInProgress"
-  content-height="'600px'"
-  loading-secondary-information="secondaryLoadInformation">
+  content-height="'600px'">
     <div pf-wizard-step step-title="Create User" substeps="false" step-id="createUser" step-priority="0" show-review="false" show-review-details="false">
       <form class="form-horizontal">
         <div pf-form-group pf-label="Username" required>
-         <input id="new-name" name="name" ng-model="data.name" type="text" ng-change="updateName()" required/>
+         <input id="new-name" name="name" ng-model="data.name" type="text" required/>
         </div>
         <div pf-form-group pf-label="Password" required>
-         <input id="new-password" name="password" ng-model="data.password" type="password" ng-change="updateName()" required/>
+         <input id="new-password" name="password" ng-model="data.password" type="password" required/>
+        </div>
+        <div pf-form-group pf-label="Re-type Password" required>
+         <input id="new-password-retype" name="password" ng-model="data.passwordRetype" type="password" ng-change="validatePassword()" required/>
         </div>
       </form>
     </div>
-    <div pf-wizard-step step-title="Base Project" substeps="false" step-id="baseProject" step-priority="1" show-review="true" review-template="review-second-template.html" >
+    <div pf-wizard-step step-title="First Project" substeps="false" step-id="baseProject" step-priority="1" show-review="false" show-review-details="false">
       <form class="form-horizontal">
-        <div pf-form-group pf-label="Initial Project Name">
+        <div pf-form-group pf-label="App Name">
           <input id="new-project" name="project" ng-model="data.project" type="text"/>
         </div>
+        <div pf-form-group pf-label="App Type">
+          <select class="selectpicker" ng-model="data.projectType">
+            <option>NodeJS</option>
+            <option>Java - Maven</option>
+          </select>
+        </div>
       </form>
     </div>
-    <div pf-wizard-step step-title="Review" substeps="true" step-id="review" step-priority="2">
-      <div ng-include="'summary.html'"></div>
-      <div ng-include="'deployment.html'"></div>
+    <div pf-wizard-step step-title="Review" substeps="false" step-id="review-summary" step-priority="2" show-review="false" show-review-details="false">
+        <table class="datatable table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>Setting</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Username</b></td>
+              <td>{{data.name}}</td>
+            </tr>
+            <tr>
+              <td><b>App Name</b></td>
+              <td><p>{{data.project}}</p></td>
+            </tr>
+            <tr>
+              <td><b>App Type</b></td>
+              <td><p>{{data.projectType}}</p></td>
+            </tr>
+          </tbody>
+        </table>
     </div>
  </div>
+
+<script>
+  $(document).ready(function() {
+    $('.selectpicker').selectpicker();
+    // $('.datatable').dataTable();
+  });
+
+</script>

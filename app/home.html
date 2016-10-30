@@ -1,0 +1,49 @@
+<html lang="en" class="login-pf">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- <link rel="stylesheet" href="/node_modules/angular-material/angular-material.min.css"> -->
+  <link href="/node_modules/patternfly/dist/css/patternfly.min.css" rel="stylesheet" media="screen, print">
+  <link href="/node_modules/patternfly/dist/css/patternfly-additions.min.css" rel="stylesheet" media="screen, print">
+  <link href="/node_modules/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet" media="screen, print">
+  <link href="/node_modules/angular-patternfly/dist/styles/angular-patternfly.min.css" rel="stylesheet" media="screen, print">
+  <link href="/node_modules/datatables/media/css/jquery.dataTables.min.css" rel="stylesheet" media="screen, print">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <div id="brand">
+          <i class="fa fa-tasks fa-inverse fa-lg"></i>&nbsp;DevOps in a Box
+        </div><!--/#brand-->
+      </div><!--/.col-*-->
+      <div class="col-sm-7 col-md-6 col-lg-5 login">
+        <form class="form-horizontal" role="form" action="/login" method="post">
+          <div class="form-group">
+            <label for="inputUsername" class="col-sm-2 col-md-2 control-label">Username</label>
+            <div class="col-sm-10 col-md-10">
+              <input type="text" class="form-control" id="inputUsername" placeholder="" tabindex="1">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputPassword" class="col-sm-2 col-md-2 control-label">Password</label>
+            <div class="col-sm-10 col-md-10">
+              <input type="password" class="form-control" id="inputPassword" placeholder="" tabindex="2">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-xs-4 col-sm-4 col-md-4 submit">
+              <button type="submit" class="btn btn-primary btn-lg" tabindex="4">Log In</button>
+            </div>
+          </div>
+        </form>
+      </div><!--/.col-*-->
+      <div class="col-sm-5 col-md-6 col-lg-7 details">
+        <p><strong>Welcome to DevOps-in-a-Box </strong></p>
+        <p>Version 0.0.1a</p>
+      </div><!--/.col-*-->
+    </div><!--/.row-->
+  </div><!--/.container-->
+
+</body>
+</html>

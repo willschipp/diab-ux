@@ -1,8 +1,22 @@
 var express = require('express');
 var app = express();
 
+var port = process.env.PORT || 3000;
+
+var passport = require('passport');
+var session = require('express-session');
+
 app.use(require('body-parser').json());
 app.use(require('body-parser').urlencoded({extended:true}));
+
+//security
+require('./config/passport.js')(passport);
+
+app.use(session({secret:'thisisaverylongsessionkey'}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 app.use('/node_modules',express.static(__dirname + '/node_modules'));
 app.use('/js',express.static(__dirname + '/app/js'));
@@ -11,10 +25,8 @@ app.use('/partials',express.static(__dirname + '/app/partials'));
 
 app.use('/api',require('./api'));
 
-app.get('/',function(req,res) {
-  res.sendFile(__dirname + '/app/index.html');
-});
+require('./routes')(app,passport);
 
-app.listen(3000,function() {
+app.listen(port,function() {
   console.log('UX started');
 });
