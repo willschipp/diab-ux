@@ -1,5 +1,7 @@
 var GitlabStrategy = require('passport-gitlab').Strategy;
-var User = require('./model/User.js');
+var jwt = require('jsonwebtoken');
+
+var jwtsecret = 'thisisthejwtlongsecret';
 
 module.exports = function(passport) {
 
@@ -17,7 +19,10 @@ module.exports = function(passport) {
       gitlabURL: 'http://172.16.217.1:32769',
       callbackURL:'http://172.16.217.1:3000/auth/gitlab/callback'
     },function(token,tokenSecret,profile,done){
-      return done(null,profile);
+      //TODO generate the JWT token and return that instead of the profile
+      var jtoken = jwt.sign({token:token,user:profile,tokenSecret:tokenSecret},jwtsecret);
+
+      return done(null,jtoken);
     }));
 
   }

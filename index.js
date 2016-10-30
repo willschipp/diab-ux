@@ -12,7 +12,7 @@ app.use(require('body-parser').urlencoded({extended:true}));
 //security
 require('./config/passport.js')(passport);
 
-app.use(session({secret:'thisisaverylongsessionkey'}));
+app.use(session({secret:'thisisaverylongsessionkey',resave: true,saveUninitialized: false}));
 
 app.use(passport.initialize());
 app.use(passport.session());

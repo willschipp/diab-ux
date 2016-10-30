@@ -23,7 +23,7 @@ angular.module('ux-app').controller('provisionController',['$scope','$modal','$r
 }]);
 
 
-angular.module('ux-app').controller('WizardController',['$scope','$rootScope',function($scope,$rootScope){
+angular.module('ux-app').controller('WizardController',['$scope','$rootScope','$http',function($scope,$rootScope,$http){
 
   $scope.data = {};
 
@@ -32,7 +32,19 @@ angular.module('ux-app').controller('WizardController',['$scope','$rootScope',fu
    };
 
    var startDeploy = function () {
-     $scope.deployInProgress = true;
+    //  $scope.deployInProgress = true;
+    var user = {
+      username:"john",
+      password:"12345678",
+      email:"john@doe.com",
+      name:"john"
+    }
+
+    return $http({method:'POST',url:'/api/user',data:user}).then(function(result){
+      console.log(result);
+    },function(err){
+      console.log(err);
+    });
    };
 
 
