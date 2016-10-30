@@ -3,7 +3,6 @@ var unirest = require('unirest');
 // var GitLab = require('gitlab');
 //
 var GITLAB_HOST = "http://172.16.217.1:32772/api/v3/users";
-var GITLAB_TOKEN = process.env.GITLAB_TOKEN || 'hpXnrbTYeeXmmVsfBy2F';
 //
 // var gitlab = new GitLab({
 //   url:GITLAB_HOST,
@@ -65,5 +64,8 @@ router.delete('/:username',function(req,res) {
   return res.sendStatus(204);
 });
 
+router.get('/admin',function(req,res) {
+  res.send(req.decoded.admin);
+});
 
 module.exports = router;

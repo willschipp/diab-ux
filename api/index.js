@@ -5,7 +5,8 @@ var jwtsecret = 'thisisthejwtlongsecret';
 
 router.use('/user',verify,require('./user'));
 router.use('/git',verify,require('./git'));
-router.use('/app',require('./app'));
+router.use('/app',verify,require('./app'));
+router.use('/settings',verify,require('./settings'));
 
 function verify(req,res,next) {
   jwt.verify(req.user,jwtsecret,function(err,decoded) {

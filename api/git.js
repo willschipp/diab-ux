@@ -25,7 +25,7 @@ router.post('/',function(req,res) {
     name:req.body.projectName
   };
 
-  unirest.post(GITLAB_HOST + '/user/' + req.body.user_id).headers({'Content-Type':'application/json','PRIVATE-TOKEN':GITLAB_TOKEN})
+  unirest.post(GITLAB_HOST + '/user/' + req.body.user_id).headers({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
   .send(project)
   .end(function(reply) {
       if (reply.status >= 200 && reply.status < 300) {
@@ -40,7 +40,7 @@ router.post('/',function(req,res) {
 
 router.get('/',function(req,res) {
   //list all projects under the username
-  unirest.get(GITLAB_HOST + '/owned').headers({'Content-Type':'application/json','Authorization':'Bearer ' + req.decoded.token})
+  unirest.get(GITLAB_HOST + '/owned').headers({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
   .send()
   .end(function(reply) {
     if (reply.status >= 200 && reply.status < 300) {

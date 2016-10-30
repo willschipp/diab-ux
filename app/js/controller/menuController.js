@@ -1,11 +1,9 @@
-angular.module('ux-app').controller('menuController',['$scope','$cookies','$window',function($scope,$cookies,$window) {
+angular.module('ux-app').controller('menuController',['$scope','$cookies','$window','userService',function($scope,$cookies,$window,userService) {
 
-  $scope.logout = function() {
-    console.log(document.cookie);
-    // console.log('default');
-    // $cookies.remove('_gitlab_session');
-    // $window.location.href = '/';
-    // return false;//disable default behavior
-  }
+  $scope.admin = false;
+
+  userService.load().then(function(result) {
+    $scope.admin = result;
+  });
 
 }]);
