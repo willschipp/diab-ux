@@ -1,10 +1,14 @@
 var GitlabStrategy = require('passport-gitlab').Strategy;
 var User = require('./model/User.js');
 
-module.exports = {
-  'passport':function(passport) {
+module.exports = function(passport) {
+
     passport.serializeUser(function(user, done) {
-        done(null, user.id);
+      done(null, user);
+    });
+
+    passport.deserializeUser(function(user,done) {
+      done(null,user);
     });
 
     passport.use('gitlab',new GitlabStrategy({
@@ -13,32 +17,7 @@ module.exports = {
       gitlabURL: 'http://172.16.217.1:32769',
       callbackURL:'http://172.16.217.1:3000/auth/gitlab/callback'
     },function(token,tokenSecret,profile,done){
-
-      console.log(token);
-      console.log("---- token above ----");
-      console.log(tokenSecret);
-      console.log("---- token secret above ----");
-      console.log(profile);
-      console.log("---- profile above ----");
-
       return done(null,profile);
-        // //
-        // User.findOrCreate({ id: profile.id},function(err,user) {
-        //   return done(err,user);
-        // });
     }));
 
-  },
-   'serialize':  function(req, res, next) {
-    console.log('serialize');
-    next();
-  },
-  'generateToken':function(req, res, next) {
-    console.log('generateToken');
-    next();
-  },
-  'respond':function(req, res, next) {
-    console.log('respond');
-    return 'respond';
   }
-}
