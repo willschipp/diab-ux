@@ -4,7 +4,7 @@ var jwt = require('jsonwebtoken');
 var jwtsecret = 'thisisthejwtlongsecret';
 
 router.use('/user',verify,require('./user'));
-router.use('/git',require('./git'));
+router.use('/git',verify,require('./git'));
 router.use('/app',require('./app'));
 
 function verify(req,res,next) {
@@ -14,7 +14,7 @@ function verify(req,res,next) {
     }//end if
     req.decoded = decoded;
     //check admin
-    req.admin = req.decoded.user._json.is_admin;
+    // req.admin = req.decoded.user._json.is_admin;
     //return
     next();
   })

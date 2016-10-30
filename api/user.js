@@ -2,8 +2,8 @@ var router = require('express').Router();
 var unirest = require('unirest');
 // var GitLab = require('gitlab');
 //
-var GITLAB_HOST = "http://172.16.217.1:32769/api/v3/users";
-var GITLAB_TOKEN = process.env.GITLAB_TOKEN || 'ganEuvisf2H_aEj1mM6E';
+var GITLAB_HOST = "http://172.16.217.1:32772/api/v3/users";
+var GITLAB_TOKEN = process.env.GITLAB_TOKEN || 'hpXnrbTYeeXmmVsfBy2F';
 //
 // var gitlab = new GitLab({
 //   url:GITLAB_HOST,
@@ -41,7 +41,7 @@ router.post('/',function(req,res) {
     email:req.body.email
   };
 
-  unirest.post(GITLAB_HOST).headers({'Content-Type':'application/json','PRIVATE-TOKEN':GITLAB_TOKEN})
+  unirest.post(GITLAB_HOST).headers({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
   .send(newUser)
   .end(function(reply) {
     if (reply.status >= 200 && reply.status < 300) {
@@ -54,7 +54,7 @@ router.post('/',function(req,res) {
 });
 
 router.get('/',function(req,res) {
-  unirest.get(GITLAB_HOST).headers({'Content-Type':'application/json','PRIVATE-TOKEN':GITLAB_TOKEN})
+  unirest.get(GITLAB_HOST).headers({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
   .end(function(reply) {
     return res.send(reply.body);
   });

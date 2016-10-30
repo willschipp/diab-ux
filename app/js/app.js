@@ -1,1 +1,1 @@
-angular.module('ux-app', ['ui.router','patternfly']);
+angular.module('ux-app', ['ui.router','patternfly','ngCookies']);

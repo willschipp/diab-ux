@@ -1,7 +1,11 @@
-angular.module('ux-app').controller('menuController',['$scope','$mdSidenav',function($scope,$mdSidenav) {
+angular.module('ux-app').controller('menuController',['$scope','$cookies','$window',function($scope,$cookies,$window) {
 
-  $scope.toggleMenu = function() {
-    $mdSidenav('left').toggle();
+  $scope.logout = function() {
+    console.log(document.cookie);
+    // console.log('default');
+    // $cookies.remove('_gitlab_session');
+    // $window.location.href = '/';
+    // return false;//disable default behavior
   }
 
 }]);

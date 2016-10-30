@@ -13,4 +13,16 @@ angular.module('ux-app').config(['$stateProvider','$urlRouterProvider',function(
     controller:'provisionController'
   });
 
+  $stateProvider.state('apps',{
+    url:'/apps',
+    templateUrl:'/partials/apps.html',
+    controller:'appController',
+    resolve: {
+      postPromise: ['projectsService',function(projectsService) {
+        return projectsService.load();
+      }]
+    }
+
+  });
+
 }]);

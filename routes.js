@@ -1,4 +1,10 @@
 //admin access token --> cBzSmnzKkMZxnKEsts8D
+var GITLAB_HOST = "http://172.16.217.1:32769/oauth/token/revoke";
+var unirest = require('unirest');
+var jwt = require('jsonwebtoken');
+
+var jwtsecret = 'thisisthejwtlongsecret';
+
 
 module.exports = function(app,passport) {
 
@@ -10,7 +16,8 @@ module.exports = function(app,passport) {
     res.sendFile(__dirname + '/app/index.html');
   });
 
-  app.get('/login',passport.authenticate('gitlab'));
+  // app.get('/login',passport.authenticate('gitlab'));
+  app.post('/login',passport.authenticate('local',{successRedirect:'/app',failureRedirect:'/'}))
 
 
   app.get('/logout',function(req,res) {
@@ -32,5 +39,4 @@ module.exports = function(app,passport) {
       // if they aren't redirect them to the home page
       res.redirect('/');
   }
-
 }

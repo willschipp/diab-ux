@@ -1,8 +1,8 @@
 var router = require('express').Router();
 var unirest = require('unirest');
 
-var GITLAB_HOST = "http://172.16.217.1:32769/api/v3/projects";
-var GITLAB_TOKEN = process.env.GITLAB_TOKEN || 'ganEuvisf2H_aEj1mM6E';
+var GITLAB_HOST = "http://172.16.217.1:32772/api/v3/projects";
+var GITLAB_TOKEN = process.env.GITLAB_TOKEN || 'hpXnrbTYeeXmmVsfBy2F';
 
 router.post('/',function(req,res) {
   //parameters should be
@@ -36,13 +36,24 @@ router.post('/',function(req,res) {
       }
   });
 
-
 });
 
-router.get('/:username',function(req,res) {
+router.get('/',function(req,res) {
   //list all projects under the username
+  unirest.get(GITLAB_HOST + '/owned').headers({'Content-Type':'application/json','Authorization':'Bearer ' + req.decoded.token})
+  .send()
+  .end(function(reply) {
+    if (reply.status >= 200 && reply.status < 300) {
+      return res.send(reply.body);
+    } else if (reply.status >= 400 && reply.status < 500) {
+      return res.sendStatus(404);
+    } else {
+      console.log(reply.body);
+      return res.sendStatus(500);
+    }
+  });
 
-  return res.sendStatus(404);//TODO update
+
 });
 
 module.exports = router;

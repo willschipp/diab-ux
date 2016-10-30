@@ -1,7 +1,11 @@
-var GitlabStrategy = require('passport-gitlab').Strategy;
+var LocalStrategy = require('passport-local').Strategy;
+var unirest = require('unirest');
+
 var jwt = require('jsonwebtoken');
 
 var jwtsecret = 'thisisthejwtlongsecret';
+
+var GITLAB_URL = "http://localhost:32772/api/v3/session";
 
 module.exports = function(passport) {
 
@@ -13,16 +17,18 @@ module.exports = function(passport) {
       done(null,user);
     });
 
-    passport.use('gitlab',new GitlabStrategy({
-      clientID:'67218fa0e843a41aec174a3c6bd313629d0973589b1c4f9f663cd0853c68078b',
-      clientSecret:'749d9291fb1d40c96d37017a19fda86dc4667c9af8619c6246ab2e79f4a728be',
-      gitlabURL: 'http://172.16.217.1:32769',
-      callbackURL:'http://172.16.217.1:3000/auth/gitlab/callback'
-    },function(token,tokenSecret,profile,done){
-      //TODO generate the JWT token and return that instead of the profile
-      var jtoken = jwt.sign({token:token,user:profile,tokenSecret:tokenSecret},jwtsecret);
-
-      return done(null,jtoken);
-    }));
-
+    passport.use(new LocalStrategy({usernameField:'username',passwordField:'password'},
+      function (username,password,done) {
+        console.log('invoked');
+        //invoke gitlab url
+        unirest.post(GITLAB_URL + "?login=" + username + "&password=" + password).headers({'Content-type':'application/json'})
+        .send()
+        .end(function(reply) {
+          if (reply.body) {
+            var jtoken = jwt.sign({token:reply.body.private_token},jwtsecret);
+            return done(null,jtoken);
+          }
+        });
+      }
+    ));
   }
