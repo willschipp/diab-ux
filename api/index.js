@@ -13,8 +13,13 @@ function verify(req,res,next) {
       return res.status(500).json({success:false,message:'Failed to authenticate token'});
     }//end if
     req.decoded = decoded;
+    //check admin
+    req.admin = req.decoded.user._json.is_admin;
+    //return
     next();
   })
 };
+
+
 
 module.exports = router;

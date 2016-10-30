@@ -10,16 +10,15 @@ angular.module('ux-app').controller('provisionController',['$scope','$modal','$r
                 size: 'lg'
               });
 
-          var closeWizard = function (e, reason) {
-            modalInstance.dismiss(reason);
-            wizardDoneListener();
-          };
+      var closeWizard = function (e, reason) {
+        modalInstance.dismiss(reason);
+        wizardDoneListener();
+      };
 
-          modalInstance.result.then(function () { }, function () { });
+      modalInstance.result.then(function () { }, function () { });
 
-          wizardDoneListener = $rootScope.$on('wizard.done', closeWizard);
+      wizardDoneListener = $rootScope.$on('wizard.done', closeWizard);
   }
-
 }]);
 
 
@@ -41,6 +40,16 @@ angular.module('ux-app').controller('WizardController',['$scope','$rootScope','$
     }
 
     return $http({method:'POST',url:'/api/user',data:user}).then(function(result){
+      //now create the project
+      console.log(result.data.id);
+      var project = {
+        projectName:"test_project",
+        user_id:result.data.id
+      }
+      return $http({method:'POST',url:'/api/git',data:project});
+    },function(err){
+      console.log(err);
+    }).then(function(result){
       console.log(result);
     },function(err){
       console.log(err);

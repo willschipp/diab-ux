@@ -34,7 +34,6 @@ router.post('/',function(req,res) {
     return res.status(500).send('No name');
   }//end if
 
-
   var newUser = {
     username:req.body.username,
     password:req.body.password,
