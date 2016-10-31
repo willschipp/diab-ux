@@ -29,6 +29,7 @@ router.post('/',function(req,res) {
   .send(project)
   .end(function(reply) {
       if (reply.status >= 200 && reply.status < 300) {
+        //now add the template file for che
         return res.status(201).send(reply.body);
       } else {
         console.log(reply.body);

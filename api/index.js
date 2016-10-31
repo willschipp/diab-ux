@@ -7,6 +7,7 @@ router.use('/user',verify,require('./user'));
 router.use('/git',verify,require('./git'));
 router.use('/app',verify,require('./app'));
 router.use('/settings',verify,require('./settings'));
+router.use('/ide',verify,require('./ide'));
 
 function verify(req,res,next) {
   jwt.verify(req.user,jwtsecret,function(err,decoded) {
