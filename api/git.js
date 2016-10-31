@@ -1,8 +1,8 @@
 var router = require('express').Router();
 var unirest = require('unirest');
 
-var GITLAB_HOST = "http://172.16.217.1:32772/api/v3/projects";
-var GITLAB_TOKEN = process.env.GITLAB_TOKEN || 'hpXnrbTYeeXmmVsfBy2F';
+var GITLAB_HOST = process.env.GITLAB_HOST || "http://172.16.217.1:32772";
+GITLAB_HOST = GITLAB_HOST + "/api/v3/projects"
 
 router.post('/',function(req,res) {
   //parameters should be

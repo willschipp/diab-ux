@@ -13,6 +13,12 @@ angular.module('ux-app').config(['$stateProvider','$urlRouterProvider',function(
     controller:'provisionController'
   });
 
+  $stateProvider.state('project',{
+    url:'/project',
+    templateUrl:'/partials/project.html',
+    controller:'projectController'
+  });
+
   $stateProvider.state('apps',{
     url:'/apps',
     templateUrl:'/partials/apps.html',
