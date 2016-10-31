@@ -31,4 +31,15 @@ angular.module('ux-app').config(['$stateProvider','$urlRouterProvider',function(
 
   });
 
+
+
+}]).run(['$state','$rootScope',function($state,$rootScope){
+  $rootScope.$on('$stateChangeStart', function(e, toState, toParams, fromState, fromParams) {
+    $rootScope.preloader = true;
+  });
+
+  $rootScope.$on('$stateChangeSuccess', function(e, toState, toParams, fromState, fromParams) {
+    console.log('finished');
+    $rootScope.preloader = false;
+  });
 }]);

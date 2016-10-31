@@ -1,8 +1,14 @@
 var router = require('express').Router();
 var unirest = require('unirest');
+var fs = require('fs');
 
 var GITLAB_HOST = process.env.GITLAB_HOST || "http://172.16.217.1:32772";
 GITLAB_HOST = GITLAB_HOST + "/api/v3/projects"
+
+var templates = {
+  'nodejs':['Dockerfile_node','node-workspace-project.json'],
+  'springboot':['Dockerfile_java','java-workspace-project.json']
+}
 
 router.post('/',function(req,res) {
   //parameters should be
@@ -37,6 +43,24 @@ router.post('/',function(req,res) {
       }
   });
 
+});
+
+
+router.post('/:project/template/:type',function(req,res) {
+  //add the files to the project
+  //load them up
+  var contentArray = [];
+  var files = templates[req.params.type];
+  for (var i=0;i<files.length;i++) {
+    var path = __dirname + '../templates/' + files[i];
+    var file = fs.readFileSync(path,'utf8');
+    //now add
+    contentArray.push(file);
+  }//end for
+  //now send
+  for (var i=0;i<contentArray.length;i++) {
+    unirest.post(GITLAB_HOST + '/')
+  }
 });
 
 router.get('/',function(req,res) {

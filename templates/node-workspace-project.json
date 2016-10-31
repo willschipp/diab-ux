@@ -1,6 +1,89 @@
 {
-  "name":"%%workspace-name%%",
-  "environment":{},
-  "defaultEnvName":"node",
-  "projects":{}
+    "environments": [
+      {
+        "name": "node-ws",
+        "machineConfigs": [
+          {
+            "limits": {
+              "ram": 2000
+            },
+            "name": "ws-machine",
+            "type": "docker",
+            "source": {
+              "location": "codenvy/node",
+              "type": "image"
+            },
+            "dev": true,
+            "links": []
+          }
+        ]
+      }
+    ],
+    "defaultEnv": "node-ws",
+	"projects": [
+      {
+        "links": [],
+        "name": "%%project_name%%",
+        "attributes": {
+          "vcs.provider.name": [
+            "git"
+          ],
+          "git.current.branch.name": [
+            "master"
+          ],
+          "contribute_to_branch": [
+            "master"
+          ],
+          "git.repository.remotes": [
+            "%%repository_url%%"
+          ]
+        },
+        "type": "node-js",
+        "source": {
+          "location": "%%repository_url%%",
+          "type": "git",
+          "parameters": {}
+        },
+        "modules": [],
+        "path": "/%%project_name%%",
+        "description": "",
+        "problems": [],
+        "mixins": [
+        	"pullRequest",
+        	"git"
+        ]
+      }
+    ],
+    "name": "%%workspace_name%%",
+    "attributes": {
+      "stackId": "node-js"
+    },
+    "commands": [
+		{
+			"commandLine": "cd ${current.project.path} && npm install",
+	        "name": "npm install",
+	        "attributes": {
+	          "previewUrl": ""
+	        },
+	        "type": "custom"
+      	},
+		{
+			"commandLine": "cd ${current.project.path} && node index.js",
+	        "name": "run",
+	        "attributes": {
+	          "previewUrl": "http://${server.port.3000}"
+	        },
+	        "type": "custom"
+      	},
+		{
+			"commandLine": "cd ${current.project.path} && git push",
+	        "name": "git push",
+	        "attributes": {
+	          "previewUrl": ""
+	        },
+	        "type": "custom"
+      	}
+      ],
+    "links": []
+
 }
