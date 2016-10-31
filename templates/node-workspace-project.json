@@ -1,0 +1,6 @@
+{
+  "name":"%%workspace-name%%",
+  "environment":{},
+  "defaultEnvName":"node",
+  "projects":{}
+}

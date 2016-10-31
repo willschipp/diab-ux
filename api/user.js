@@ -1,15 +1,10 @@
 var router = require('express').Router();
 var unirest = require('unirest');
-// var GitLab = require('gitlab');
 //
-var GITLAB_HOST = "http://172.16.217.1:32772/api/v3/users";
-//
-// var gitlab = new GitLab({
-//   url:GITLAB_HOST,
-//   token:GITLAB_TOKEN
-// });
+var GITLAB_HOST = process.env.GITLAB_HOST || "http://172.16.217.1:32772";
+GITLAB_HOST = GITLAB_HOST + "/api/v3/users"
 
-
+//create a new user
 router.post('/',function(req,res) {
   //validate the requirements
   //should have username, email address and password
@@ -52,6 +47,7 @@ router.post('/',function(req,res) {
   });
 });
 
+//get all the users (admin only)
 router.get('/',function(req,res) {
   unirest.get(GITLAB_HOST).headers({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
   .end(function(reply) {
@@ -59,11 +55,13 @@ router.get('/',function(req,res) {
   });
 });
 
+//delete a user (admin only)
 router.delete('/:username',function(req,res) {
   console.log(req.params.username);
   return res.sendStatus(204);
 });
 
+//TODO --> remove (not needed with settings)
 router.get('/admin',function(req,res) {
   res.send(req.decoded.admin);
 });
