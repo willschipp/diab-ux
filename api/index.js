@@ -9,6 +9,7 @@ router.use('/app',verify,require('./app'));
 router.use('/settings',verify,require('./settings'));
 router.use('/ide',verify,require('./ide'));
 router.use('/template',verify,require('./template'));
+router.use('/ci',verify,require('./ci'));
 
 function verify(req,res,next) {
   jwt.verify(req.user,JWT_SECRET,function(err,decoded) {

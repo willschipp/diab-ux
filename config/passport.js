@@ -5,7 +5,8 @@ var jwt = require('jsonwebtoken');
 
 var jwtsecret = 'thisisthejwtlongsecret';
 
-var GITLAB_URL = process.env.GITLAB_URL || "http://localhost:32772/api/v3/session";
+var GITLAB_HOST = process.env.GITLAB_HOST || "http://locahost";
+var GITLAB_URL = GITLAB_HOST + "/api/v3/session";
 
 module.exports = function(passport) {
 

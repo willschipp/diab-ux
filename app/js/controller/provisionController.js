@@ -30,7 +30,9 @@ angular.module('ux-app').controller('WizardController',['$scope','$rootScope','$
   $scope.projectFinished = false;
   $scope.templateFinished = false;
   $scope.createFinished = false;
+  $scope.workspaceFinished = false;
   $scope.createError = false;
+
 
   $scope.error = {
     content:''
@@ -41,10 +43,14 @@ angular.module('ux-app').controller('WizardController',['$scope','$rootScope','$
    };
 
    var startDeploy = function () {
+
+     var projectId = '';
+     var user_id = '';
      //do the user
      return provisionService.createUser($scope.data).then(function(result) {
        if (result) {
          $scope.userFinished = true;
+         user_id = result;
          //create the project
          var project = {
            projectName:$scope.data.project,
@@ -56,20 +62,33 @@ angular.module('ux-app').controller('WizardController',['$scope','$rootScope','$
        if (result) {
          $scope.projectFinished = true;
          //add the files
+         projectId = result;
+         console.log(result);
         //  return true;//exit
-        return provisionService.deployTemplate(result,$scope.data.projectType);
+        return provisionService.deployTemplate(result,$scope.data.projectType,$scope.data.project,$scope.data.username);
         // return $rootScope.$emit('wizard.done', 'done');
        }//end if
      }).then(function(result) {
        if (result) {
          $scope.templateFinished = true;
-         $scope.createFinished = true;
-         return true;//exit
+        //  $scope.createFinished = true;
+        //  return true;//exit
+        return provisionService.deployWorkspace(projectId)
        } else {
          $scope.error.content = 'Problem deploying files';
          $scope.createError = true;
          return;
        }
+     }).then(function(result) {
+       if (result) {
+         $scope.workspaceFinished = true;
+         $scope.createFinished = true;
+         return true;
+       } else {
+         $scope.error.content = 'Problem deploying workspace';
+         $scope.createError = true;
+         return;
+       }//end if
      });
 
    };

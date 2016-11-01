@@ -63,6 +63,30 @@ angular.module('ux-app').factory('provisionService',['$http',function($http) {
     });
   }
 
+  provision.deployWorkspace = function(projectId) {
+    //get the workspace json
+    var filePath = 'workspace-project.json';
+    return $http({method:'GET',url:'/api/git/file/' + projectId + '/' + filePath}).then(function(result){
+      var json = result.data;
+      //the content is base64 encoded, need to send it back
+      console.log(json);
+      var payload = {
+        workspace: json
+      }
+      //submit to the api to create the workspace
+      return $http({method:'POST',url:'/api/ide',data:payload})
+    },function(err){
+      console.log(err)
+      return;
+    }).then(function(result){
+      return true;
+    },function(err){
+      console.log(err);
+      return;
+    });
+
+  }
+
   provision.deployTemplate = function(projectId,type,projectName,username) {
 
     var payload = {
@@ -70,6 +94,8 @@ angular.module('ux-app').factory('provisionService',['$http',function($http) {
       workspaceName:'workspace-' + username,
       username:username
     };
+
+    console.log(payload);
 
     return $http({method:'POST',url:'/api/git/' + projectId + '/template/' + type,data:payload}).
     then(function(result) {

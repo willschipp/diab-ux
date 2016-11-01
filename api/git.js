@@ -3,8 +3,8 @@ var unirest = require('unirest');
 var fs = require('fs');
 var request = require('sync-request');
 
-var GITLAB_SERVER = process.env.GITLAB_HOST || "http://172.16.217.1:32772";
-var GITLAB_HOST = GITLAB_SERVER + "/api/v3/projects"
+var GITLAB_HOST = process.env.GITLAB_HOST || "http://172.16.217.1:32772";
+var GITLAB_SERVER = GITLAB_HOST + "/api/v3/projects"
 
 var templates = {
   'nodejs':{
@@ -34,7 +34,7 @@ router.post('/',function(req,res) {
     name:req.body.projectName
   };
 
-  unirest.post(GITLAB_HOST + '/user/' + req.body.user_id).headers({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
+  unirest.post(GITLAB_SERVER + '/user/' + req.body.user_id).headers({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
   .send(project)
   .end(function(reply) {
       if (reply.status >= 200 && reply.status < 300) {
@@ -43,7 +43,7 @@ router.post('/',function(req,res) {
           user_id:req.decoded.userId,
           access_level:40
         }
-        unirest.post(GITLAB_HOST + '/' + projectId + '/members').headers({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
+        unirest.post(GITLAB_SERVER + '/' + projectId + '/members').headers({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
         .send(user)
         .end(function(re) {
           if (re.status >= 200 && re.status < 300) {
@@ -61,13 +61,14 @@ router.post('/',function(req,res) {
 
 });
 
-
+//deploy the templates
 router.post('/:project/template/:type',function(req,res) {
   //add the files to the project
+  console.log(req.body);
   //load them up
   var contentArray = {};
   var files = templates[req.params.type];
-  var repository_url = GITLAB_SERVER + '/' + req.body.username + '/' + req.body.projectName + '.git';
+  var repository_url = GITLAB_HOST + '/' + req.body.username + '/' + req.body.projectName + '.git';
   // for (var i=0;i<files.length;i++) {
   for (key in files) {
     // var path = __dirname + '/../templates/' + files[i];
@@ -79,6 +80,10 @@ router.post('/:project/template/:type',function(req,res) {
     file = file.replace(/%%repository_url%%/g,repository_url);
     //now add
     contentArray[files[key]] = file;
+    //test and show
+    if (key.indexOf('.json') >= 0) {
+      console.log(file);
+    }
   }//end for
   //now send
   //TODO --fix thix
@@ -93,7 +98,7 @@ router.post('/:project/template/:type',function(req,res) {
     }
 
     console.log('sending...');
-    var url = GITLAB_HOST + '/' + req.params.project + '/repository/files';
+    var url = GITLAB_SERVER + '/' + req.params.project + '/repository/files';
 
     var response = request('POST',url,{headers:{
       'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token
@@ -110,7 +115,7 @@ router.post('/:project/template/:type',function(req,res) {
 
 router.get('/',function(req,res) {
   //list all projects under the username
-  unirest.get(GITLAB_HOST + '/owned').headers({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
+  unirest.get(GITLAB_SERVER + '/owned').headers({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
   .send()
   .end(function(reply) {
     if (reply.status >= 200 && reply.status < 300) {
@@ -122,8 +127,23 @@ router.get('/',function(req,res) {
       return res.sendStatus(500);
     }
   });
+});
 
-
+router.get('/file/:projectId/:filePath',function(req,res) {
+  //get the file
+  var url = GITLAB_SERVER + '/' + req.params.projectId + '/repository/files?file_path='+ req.params.filePath + '&ref=master';
+  console.log(url);
+  unirest.get(url).headers({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
+  .send()
+  .end(function(reply) {
+    if (reply.status >= 300) {
+      console.log(reply.status);
+      console.log(reply.body);
+      return res.sendStatus(500);
+    } else {
+      return res.send(reply.body.content);
+    }//end if
+  });
 });
 
 module.exports = router;
