@@ -1,4 +1,4 @@
-angular.module('ux-app').controller('provisionController',['$scope','$modal','$rootScope',function($scope,$modal,$rootScope) {
+angular.module('ux-app').controller('provisionController',['$scope','$modal','$rootScope',function($scope,$modal,$rootScope,provisionService) {
 
   $scope.launchWizard = function() {
     var wizardDoneListener,
@@ -22,7 +22,7 @@ angular.module('ux-app').controller('provisionController',['$scope','$modal','$r
 }]);
 
 
-angular.module('ux-app').controller('WizardController',['$scope','$rootScope','$http',function($scope,$rootScope,$http){
+angular.module('ux-app').controller('WizardController',['$scope','$rootScope','$http','provisionService',function($scope,$rootScope,$http,provisionService){
 
   $scope.data = {};
 
@@ -31,7 +31,11 @@ angular.module('ux-app').controller('WizardController',['$scope','$rootScope','$
    };
 
    var startDeploy = function () {
+     return provisionService.init($scope.data).then(function(result) {
+       console.log(result);
+     });
     //  $scope.deployInProgress = true;
+    /*
     var user = {
       username:$scope.data.username,
       password:$scope.data.password,
@@ -56,7 +60,11 @@ angular.module('ux-app').controller('WizardController',['$scope','$rootScope','$
     },function(err){
       console.log(err);
     });
+    */
+
+
    };
+
 
 
    $scope.nextCallback = function (step) {

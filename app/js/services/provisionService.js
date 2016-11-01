@@ -16,7 +16,7 @@ angular.module('ux-app').factory('provisionService',['$http',function($http) {
       console.log(result.data.id);
       //create a project
       var project = {
-        projectName:$scope.data.project,
+        projectName:payload.project,
         user_id:result.data.id
       }//end project
       //create the project --> add files including Dockerfile template based on project type choice
@@ -40,9 +40,21 @@ angular.module('ux-app').factory('provisionService',['$http',function($http) {
   provision.createNewProject = function(payload,type) {
     //invoke the following steps
     //create the project
-    return $http({method:'POST',url:'/api/git',data:project}).then(function(result){
+    return $http({method:'POST',url:'/api/git',data:payload}).then(function(result){
+      console.log(result.data);
+      var templateData = {
+        projectName:"something",
+        workspaceName:"make-one-up",
+        projectUrl:"url from data"
+      }
       //now add the files to the location based on the project type
       //files should be --> empty README.md, Dockerfile, basic structure (package.json, pom.xml)
+      return $http({method:'POST',url:'/api/git/' + result.data.id + '/template/'  + type,data:templateData});
+    },function(err){
+      console.log(err);
+      return;
+    }).then(function(result){
+      return true;
     },function(err){
       console.log(err);
       return;
@@ -53,7 +65,7 @@ angular.module('ux-app').factory('provisionService',['$http',function($http) {
   //function to load up the various files on the basis of file type
   //returns an array of the files to be written
   function getFileSet(type) {
-    
+
   }
 
   return provision;

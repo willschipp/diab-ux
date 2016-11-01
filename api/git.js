@@ -31,10 +31,15 @@ router.post('/',function(req,res) {
     name:req.body.projectName
   };
 
+
+
   unirest.post(GITLAB_HOST + '/user/' + req.body.user_id).headers({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
   .send(project)
   .end(function(reply) {
       if (reply.status >= 200 && reply.status < 300) {
+
+        //TODO --> add the admin to the project here --> POST /projects/:id/members {"user_id":"admin id","access_level":"30"}
+
         //now add the template file for che
         return res.status(201).send(reply.body);
       } else {
@@ -46,21 +51,54 @@ router.post('/',function(req,res) {
 });
 
 
+//TODO - figure out permissions
+
 router.post('/:project/template/:type',function(req,res) {
   //add the files to the project
   //load them up
-  var contentArray = [];
+  var contentArray = {};
   var files = templates[req.params.type];
   for (var i=0;i<files.length;i++) {
-    var path = __dirname + '../templates/' + files[i];
+    var path = __dirname + '/../templates/' + files[i];
     var file = fs.readFileSync(path,'utf8');
     //now add
-    contentArray.push(file);
+    contentArray[files[i]] = file;
   }//end for
   //now send
-  for (var i=0;i<contentArray.length;i++) {
-    unirest.post(GITLAB_HOST + '/')
+  console.log(contentArray);
+  //TODO --fix thix
+  for (key in contentArray) {
+    var payload = {
+      "file_name":key,
+      "branch_name":"master",
+      "content":contentArray[key],
+      "file_path":"./" + key,
+      "commit_message":"template"
+    }
+
+    console.log('sending...');
+    var url = GITLAB_HOST + '/' + req.params.project + '/repository/files';
+    console.log(url);
+    unirest.post(url).header({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
+    .send(payload)
+    .end(function(reply) {
+      console.log(reply);
+      if (reply.status > 400) {
+        //problem
+        console.log(reply);
+        return;
+      }//end if
+    });
   }
+  // for (var i=0;i<contentArray.length;i++) {
+  //   var payload = {
+  //     "file_name":contentArray[i],
+  //     "branch_name":"master",
+  //     "content":contentArray[i]
+  //   }
+  //   unirest.post(GITLAB_HOST + '/' + req.params.project + '/repository/files').header({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
+  //   .send()
+  // }
 });
 
 router.get('/',function(req,res) {
