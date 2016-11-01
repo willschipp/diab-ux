@@ -3,11 +3,17 @@ var unirest = require('unirest');
 var fs = require('fs');
 var request = require('sync-request');
 
-var GITLAB_HOST = process.env.GITLAB_HOST || "http://172.16.217.1:32772";
-GITLAB_HOST = GITLAB_HOST + "/api/v3/projects"
+var GITLAB_SERVER = process.env.GITLAB_HOST || "http://172.16.217.1:32772";
+var GITLAB_HOST = GITLAB_SERVER + "/api/v3/projects"
 
 var templates = {
-  'nodejs':['Dockerfile_node','node-workspace-project.json'],
+  'nodejs':{
+    'Dockerfile_node':'Dockerfile',
+    'node-workspace-project.json':'workspace-project.json',
+    'node_gitignore':'.gitignore',
+    'README.md':'README.md'
+  },
+
   'springboot':['Dockerfile_java','java-workspace-project.json']
 }
 
@@ -56,24 +62,28 @@ router.post('/',function(req,res) {
 });
 
 
-//TODO - figure out permissions
-
 router.post('/:project/template/:type',function(req,res) {
   //add the files to the project
   //load them up
   var contentArray = {};
   var files = templates[req.params.type];
-  for (var i=0;i<files.length;i++) {
-    var path = __dirname + '/../templates/' + files[i];
+  var repository_url = GITLAB_SERVER + '/' + req.body.username + '/' + req.body.projectName + '.git';
+  // for (var i=0;i<files.length;i++) {
+  for (key in files) {
+    // var path = __dirname + '/../templates/' + files[i];
+    var path = __dirname + '/../templates/' + key;
     var file = fs.readFileSync(path,'utf8');
+    //do the substitution
+    file = file.replace(/%%project_name%%/g,req.body.projectName);
+    file = file.replace(/%%workspace_name%%/g,req.body.workspaceName);
+    file = file.replace(/%%repository_url%%/g,repository_url);
     //now add
-    contentArray[files[i]] = file;
+    contentArray[files[key]] = file;
   }//end for
   //now send
-  // console.log(contentArray);
-  var broken = false;
   //TODO --fix thix
   for (key in contentArray) {
+
     var payload = {
       "file_name":key,
       "branch_name":"master",
@@ -84,7 +94,6 @@ router.post('/:project/template/:type',function(req,res) {
 
     console.log('sending...');
     var url = GITLAB_HOST + '/' + req.params.project + '/repository/files';
-    console.log(url);
 
     var response = request('POST',url,{headers:{
       'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token
@@ -94,30 +103,9 @@ router.post('/:project/template/:type',function(req,res) {
       console.log(response.getBody('utf8'));
       return res.sendStatus(500);
     }//end if
-
-    // unirest.post(url).header({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
-    // .send(payload)
-    // .end(function(reply) {
-    //   // console.log(reply);
-    //   if (reply.status > 400) {
-    //     //problem
-    //     console.log(reply.body);
-    //     broken = true;
-    //     return res.sendStatus(500);
-    //   }//end if
-    // });
   }
 
   return res.sendStatus(201);
-  // for (var i=0;i<contentArray.length;i++) {
-  //   var payload = {
-  //     "file_name":contentArray[i],
-  //     "branch_name":"master",
-  //     "content":contentArray[i]
-  //   }
-  //   unirest.post(GITLAB_HOST + '/' + req.params.project + '/repository/files').header({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
-  //   .send()
-  // }
 });
 
 router.get('/',function(req,res) {

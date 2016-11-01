@@ -72,39 +72,6 @@ angular.module('ux-app').controller('WizardController',['$scope','$rootScope','$
        }
      });
 
-
-    //  return provisionService.init($scope.data).then(function(result) {
-    //    console.log(result);
-    //  });
-    //  $scope.deployInProgress = true;
-    /*
-    var user = {
-      username:$scope.data.username,
-      password:$scope.data.password,
-      email:$scope.data.email,
-      name:$scope.data.name
-    }
-
-    return $http({method:'POST',url:'/api/user',data:user}).then(function(result){
-      //now create the project
-      console.log(result.data.id);
-      //create a project
-      var project = {
-        projectName:$scope.data.project,
-        user_id:result.data.id
-      }
-      //execute
-      return $http({method:'POST',url:'/api/git',data:project});
-    },function(err){
-      console.log(err);
-    }).then(function(result){
-      console.log(result);
-    },function(err){
-      console.log(err);
-    });
-    */
-
-
    };
 
 

@@ -31,9 +31,6 @@ angular.module('ux-app').factory('provisionService',['$http',function($http) {
       console.log(err);
       return;
     });
-
-    //create the workspace with the embedded project
-    //create the deployment manifest --> app and port number
   }
 
 
@@ -60,31 +57,21 @@ angular.module('ux-app').factory('provisionService',['$http',function($http) {
     //create the project
     return $http({method:'POST',url:'/api/git',data:payload}).then(function(result){
       return result.data;
-      //
-      // console.log(Date.now() + ' ' + result);
-      //
-      // var templateData = {
-      //   projectName:"something",
-      //   workspaceName:"make-one-up",
-      //   projectUrl:"url from data"
-      // }
-      // //now add the files to the location based on the project type
-      // //files should be --> empty README.md, Dockerfile, basic structure (package.json, pom.xml)
-      // return $http({method:'POST',url:'/api/git/' + result.data + '/template/'  + type,data:templateData});
     },function(err){
       console.log(err);
       return;
-    });//.then(function(result){
-    //   return true;
-    // },function(err){
-    //   console.log(err);
-    //   return;
-    // });
-    //add the foundational files
+    });
   }
 
-  provision.deployTemplate = function(projectId,type) {
-    return $http({method:'POST',url:'/api/git/' + projectId + '/template/' + type}).
+  provision.deployTemplate = function(projectId,type,projectName,username) {
+
+    var payload = {
+      projectName:projectName,
+      workspaceName:'workspace-' + username,
+      username:username
+    };
+
+    return $http({method:'POST',url:'/api/git/' + projectId + '/template/' + type,data:payload}).
     then(function(result) {
       return true;//all good
     },function(err) {
