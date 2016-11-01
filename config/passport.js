@@ -24,8 +24,10 @@ module.exports = function(passport) {
         .send()
         .end(function(reply) {
           if (reply.body) {
-            var jtoken = jwt.sign({token:reply.body.private_token,
+            var jtoken = jwt.sign({
+                token:reply.body.private_token,
                 admin:reply.body.is_admin,
+                userId:reply.body.id,
                 username:username},jwtsecret);
             return done(null,jtoken);
           }

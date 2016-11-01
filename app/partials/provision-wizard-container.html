@@ -1,3 +1,4 @@
+
 <div pf-wizard title="Create New Workspace"
   wizard-ready="deployProviderReady"
   on-finish="finishedWizard()"
@@ -40,6 +41,7 @@
       </form>
     </div>
     <div pf-wizard-step step-title="Review" substeps="false" step-id="review-summary" step-priority="2" show-review="false" show-review-details="false">
+      <div>
         <table class="datatable table table-striped table-bordered">
           <thead>
             <tr>
@@ -62,6 +64,27 @@
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+    <div pf-wizard-step step-title="Create" substeps="false" step-id="review-progress" step-priority="3" show-review="false" show-review-details="false">
+      <div>
+        <h3 ng-show="createError">{{error.content}}</h3>
+        <ul>
+          <li>
+            Creating User... <span ng-show="userFinished"><i class="fa fa-check fa-lg"></i></span>
+          </li>
+          <li>
+            Creating New Project... <span ng-show="projectFinished"><i class="fa fa-check fa-lg"></i></span>
+          </li>
+          <li>
+            Templates Deployed... <span ng-show="templateFinished"><i class="fa fa-check fa-lg"></i></span>
+          </li>
+          <li>
+            Finished... <span ng-show="createFinished"><i class="fa fa-check fa-lg"></i></span>
+          </li>
+        </ul>
+      </div>
+
     </div>
  </div>
 

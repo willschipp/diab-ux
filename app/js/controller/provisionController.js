@@ -26,14 +26,56 @@ angular.module('ux-app').controller('WizardController',['$scope','$rootScope','$
 
   $scope.data = {};
 
+  $scope.userFinished = false;
+  $scope.projectFinished = false;
+  $scope.templateFinished = false;
+  $scope.createFinished = false;
+  $scope.createError = false;
+
+  $scope.error = {
+    content:''
+  }
+
   var initializeWizard = function () {
      $scope.nextButtonTitle = "Next >";
    };
 
    var startDeploy = function () {
-     return provisionService.init($scope.data).then(function(result) {
-       console.log(result);
+     //do the user
+     return provisionService.createUser($scope.data).then(function(result) {
+       if (result) {
+         $scope.userFinished = true;
+         //create the project
+         var project = {
+           projectName:$scope.data.project,
+           user_id:result
+         }//end project
+         return provisionService.createNewProject(project);
+       }
+     }).then(function(result) {
+       if (result) {
+         $scope.projectFinished = true;
+         //add the files
+        //  return true;//exit
+        return provisionService.deployTemplate(result,$scope.data.projectType);
+        // return $rootScope.$emit('wizard.done', 'done');
+       }//end if
+     }).then(function(result) {
+       if (result) {
+         $scope.templateFinished = true;
+         $scope.createFinished = true;
+         return true;//exit
+       } else {
+         $scope.error.content = 'Problem deploying files';
+         $scope.createError = true;
+         return;
+       }
      });
+
+
+    //  return provisionService.init($scope.data).then(function(result) {
+    //    console.log(result);
+    //  });
     //  $scope.deployInProgress = true;
     /*
     var user = {
@@ -70,7 +112,7 @@ angular.module('ux-app').controller('WizardController',['$scope','$rootScope','$
    $scope.nextCallback = function (step) {
      // call startdeploy after deploy button is clicked on review-summary tab
      if (step.stepId === 'review-summary') {
-       startDeploy();
+       return startDeploy();
      }
      return true;
    };
@@ -102,5 +144,3 @@ angular.module('ux-app').controller('WizardController',['$scope','$rootScope','$
    initializeWizard();
 
 }]);
-
-angular.module('ux-app').controller('CreateUserController',['$scope','$rootScope',function($scope,$rootScope){}]);

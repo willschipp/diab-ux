@@ -1,6 +1,7 @@
 var router = require('express').Router();
 var unirest = require('unirest');
 var fs = require('fs');
+var request = require('sync-request');
 
 var GITLAB_HOST = process.env.GITLAB_HOST || "http://172.16.217.1:32772";
 GITLAB_HOST = GITLAB_HOST + "/api/v3/projects"
@@ -17,10 +18,6 @@ router.post('/',function(req,res) {
     console.log('Error - no user id');
     return res.status(500).send('No user id');
   }//end if
-  // if (req.body.password == undefined || req.body.password.length <= 0) {
-  //   console.log('Error - no password');
-  //   return res.send('No password',500);
-  // }//end if
   if (req.body.projectName == undefined || req.body.projectName.length <= 0) {
     console.log('Error - no app');
     return res.status(500).send('No project name');
@@ -31,17 +28,25 @@ router.post('/',function(req,res) {
     name:req.body.projectName
   };
 
-
-
   unirest.post(GITLAB_HOST + '/user/' + req.body.user_id).headers({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
   .send(project)
   .end(function(reply) {
       if (reply.status >= 200 && reply.status < 300) {
-
-        //TODO --> add the admin to the project here --> POST /projects/:id/members {"user_id":"admin id","access_level":"30"}
-
-        //now add the template file for che
-        return res.status(201).send(reply.body);
+        var projectId = reply.body.id;
+        var user = {
+          user_id:req.decoded.userId,
+          access_level:40
+        }
+        unirest.post(GITLAB_HOST + '/' + projectId + '/members').headers({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
+        .send(user)
+        .end(function(re) {
+          if (re.status >= 200 && re.status < 300) {
+            return res.send('' + projectId);
+          } else {
+            console.log(re.status);
+            return res.sendStatus(500);
+          }//end if
+        });
       } else {
         console.log(reply.body);
         res.sendStatus(500);
@@ -65,7 +70,8 @@ router.post('/:project/template/:type',function(req,res) {
     contentArray[files[i]] = file;
   }//end for
   //now send
-  console.log(contentArray);
+  // console.log(contentArray);
+  var broken = false;
   //TODO --fix thix
   for (key in contentArray) {
     var payload = {
@@ -79,17 +85,30 @@ router.post('/:project/template/:type',function(req,res) {
     console.log('sending...');
     var url = GITLAB_HOST + '/' + req.params.project + '/repository/files';
     console.log(url);
-    unirest.post(url).header({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
-    .send(payload)
-    .end(function(reply) {
-      console.log(reply);
-      if (reply.status > 400) {
-        //problem
-        console.log(reply);
-        return;
-      }//end if
-    });
+
+    var response = request('POST',url,{headers:{
+      'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token
+    },json:payload});
+
+    if (response.statusCode >= 400) {
+      console.log(response.getBody('utf8'));
+      return res.sendStatus(500);
+    }//end if
+
+    // unirest.post(url).header({'Content-Type':'application/json','PRIVATE-TOKEN':req.decoded.token})
+    // .send(payload)
+    // .end(function(reply) {
+    //   // console.log(reply);
+    //   if (reply.status > 400) {
+    //     //problem
+    //     console.log(reply.body);
+    //     broken = true;
+    //     return res.sendStatus(500);
+    //   }//end if
+    // });
   }
+
+  return res.sendStatus(201);
   // for (var i=0;i<contentArray.length;i++) {
   //   var payload = {
   //     "file_name":contentArray[i],
